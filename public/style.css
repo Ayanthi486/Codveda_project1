@@ -1,59 +1,250 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    margin: 50px;
-    text-align: center;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-h1 {
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
     color: #333;
 }
 
 .container {
-    max-width: 400px;
-    margin: 0 auto;
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 440px;
 }
 
-.form-container {
+.card {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+h2 {
     margin-bottom: 20px;
+    color: #222;
+    text-align: center;
+    font-size: 24px;
 }
 
-input[type="text"] {
-    padding: 8px;
-    width: 65%;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.dashboard-header h2 {
+    margin-bottom: 0;
+    font-size: 20px;
+}
+
+.role-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 12px;
+    letter-spacing: 0.5px;
+}
+
+.badge-admin {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.badge-user {
+    background-color: #cce5ff;
+    color: #004085;
+    border: 1px solid #b8daff;
+}
+
+.panel-box {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.panel-box h4 {
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.admin-panel {
+    background-color: #e2f0d9;
+    border-left: 4px solid #4caf50;
+    color: #2e5628;
+}
+
+.user-panel {
+    background-color: #e8f4fd;
+    border-left: 4px solid #2196f3;
+    color: #1a517e;
+}
+
+.divider {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 18px 0;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    margin-bottom: 6px;
+    color: #555;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.input-group input, 
+.input-group select {
+    padding: 11px 13px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
     outline: none;
+    transition: border-color 0.2s;
+}
+
+.input-group input:focus, 
+.input-group select:focus {
+    border-color: #007bff;
 }
 
 button {
-    padding: 8px 15px;
+    width: 100%;
+    padding: 12px;
     background-color: #007bff;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
-    margin-left: 5px;
+    transition: background-color 0.2s, transform 0.1s;
 }
 
 button:hover {
     background-color: #0056b3;
 }
 
-ul {
-    list-style-type: none;
-    padding: 0;
+button:active {
+    transform: scale(0.99);
 }
 
-li {
-    background: #f9f9f9;
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #eee;
-    text-align: left;
+#logout-btn {
+    background-color: #e63946;
+    margin-top: 20px;
+}
+
+#logout-btn:hover {
+    background-color: #c92a37;
+}
+
+.toggle-text {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 14px;
+    color: #666;
+}
+
+.toggle-text a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 5px;
+}
+
+.toggle-text a:hover {
+    text-decoration: underline;
+}
+
+/* Items Section */
+.items-section h3 {
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: #333;
+}
+
+.form-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.form-container input[type="text"] {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+}
+
+.form-container input[type="text"]:focus {
+    border-color: #007bff;
+}
+
+.form-container button {
+    width: auto;
+    padding: 10px 18px;
+    margin-top: 0;
+}
+
+ul#item-list {
+    list-style-type: none;
+    padding: 0;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.item-row {
+    background: #f8fafc;
+    margin-bottom: 8px;
+    padding: 9px 12px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.empty-msg {
+    text-align: center;
+    color: #888;
+    font-size: 13px;
+    padding: 15px;
+}
+
+.delete-btn {
+    width: auto;
+    background: transparent;
+    color: #dc3545;
+    border: none;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 4px 8px;
+    margin: 0;
+    border-radius: 4px;
+}
+
+.delete-btn:hover {
+    background: #ffe3e6;
+    color: #bd2130;
 }

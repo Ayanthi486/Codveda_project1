@@ -3,22 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Codveda Level 2 - MySQL Items App</title>
-
+    <title>Codveda Full Stack - Auth & Items App</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="container">
-        <h1>Items Management App</h1>
+        <!-- Auth Container (Login / Register) -->
+        <div id="auth-box" class="card">
+            <h2 id="form-title">Login</h2>
+            <form id="auth-form">
+                <div class="input-group" id="username-group" style="display: none;">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter your username">
+                </div>
 
-        <div class="form-container">
-            <input type="text" id="item-input" placeholder="Enter item name..." />
-            <button onclick="addItem()">Add Item</button>
+                <div class="input-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="Enter your email" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                </div>
+
+                <div class="input-group" id="role-group" style="display: none;">
+                    <label for="role">Select Role</label>
+                    <select id="role">
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+
+                <button type="submit" id="submit-btn">Login</button>
+            </form>
+
+            <div class="toggle-text">
+                <span id="toggle-msg">Don't have an account?</span>
+                <a href="#" id="toggle-btn">Register here</a>
+            </div>
         </div>
 
-        <ul id="item-list"></ul>
+        <!-- Dashboard Container (Shown when Logged In) -->
+        <div id="dashboard-box" class="card" style="display: none;">
+            <div class="dashboard-header">
+                <h2>Welcome, <span id="user-display-name"></span>!</h2>
+                <span class="role-badge" id="user-display-role">USER</span>
+            </div>
+
+            <!-- Role-Specific UI Banner -->
+            <div id="role-content"></div>
+
+            <hr class="divider">
+
+            <!-- Items Management Section -->
+            <div class="items-section">
+                <h3>Items Management</h3>
+                <div class="form-container">
+                    <input type="text" id="item-input" placeholder="Enter item name..." />
+                    <button type="button" id="add-item-btn" onclick="addItem()">Add</button>
+                </div>
+
+                <ul id="item-list"></ul>
+            </div>
+
+            <button type="button" id="logout-btn">Logout</button>
+        </div>
     </div>
+
     <script src="Script.js"></script>
 </body>
 </html>
