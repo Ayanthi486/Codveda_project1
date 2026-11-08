@@ -1,101 +1,3 @@
-// API URLs
-const API_ITEMS_URL = '/api/items';
-const API_AUTH_URL = '/api/auth';
-
-// Items Management
-function loadItems() {
-    const listElement = document.getElementById('item-list');
-    if (!listElement) return;
-
-    const userStr = localStorage.getItem('user');
-    const user = userStr ? JSON.parse(userStr) : null;
-    const isAdmin = user && user.role === 'admin';
-
-    fetch(API_ITEMS_URL)
-        .then(res => res.json())
-        .then(data => {
-            listElement.innerHTML = '';
-            if (!Array.isArray(data) || data.length === 0) {
-                listElement.innerHTML = '<li class="empty-msg">No items found. Add your first item!</li>';
-                return;
-            }
-
-            data.forEach(item => {
-                const li = document.createElement('li');
-                li.className = 'item-row';
-
-                const nameSpan = document.createElement('span');
-                nameSpan.textContent = item.name;
-                li.appendChild(nameSpan);
-
-                // Admin or user can delete items
-                const deleteBtn = document.createElement('button');
-                deleteBtn.textContent = '✕';
-                deleteBtn.className = 'delete-btn';
-                deleteBtn.title = 'Delete item';
-                deleteBtn.onclick = () => deleteItem(item.id);
-                li.appendChild(deleteBtn);
-
-                listElement.appendChild(li);
-            });
-        })
-        .catch(err => console.error('Error fetching items:', err));
-}
-
-function addItem() {
-    const inputField = document.getElementById('item-input');
-    if (!inputField) return;
-
-    const itemName = inputField.value.trim();
-    if (!itemName) {
-        alert('Please enter an item name!');
-        return;
-    }
-
-    fetch(API_ITEMS_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: itemName })
-    })
-    .then(res => {
-        if (!res.ok) throw new Error('Failed to add item');
-        return res.json();
-    })
-    .then(() => {
-        inputField.value = '';
-        loadItems();
-    })
-    .catch(err => {
-        console.error('Error adding item:', err);
-        alert('Could not add item: ' + err.message);
-    });
-}
-
-function deleteItem(id) {
-    if (!confirm('Are you sure you want to delete this item?')) return;
-
-    fetch(`${API_ITEMS_URL}/${id}`, {
-        method: 'DELETE'
-    })
-    .then(res => {
-        if (!res.ok) throw new Error('Failed to delete item');
-        return res.json();
-    })
-    .then(() => {
-        loadItems();
-    })
-    .catch(err => {
-        console.error('Error deleting item:', err);
-        alert('Could not delete item: ' + err.message);
-    });
-}
-
-// Attach to window so HTML onclick handlers can access them
-window.addItem = addItem;
-window.deleteItem = deleteItem;
-window.loadItems = loadItems;
-
-// DOM Initialization
 document.addEventListener('DOMContentLoaded', () => {
     let isRegisterMode = false;
 
@@ -111,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const authBox = document.getElementById('auth-box');
     const dashboardBox = document.getElementById('dashboard-box');
 
-    // Toggle between Login and Register modes
+    // Toggle between Login and Register Form
     if (toggleBtn) {
         toggleBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -135,17 +37,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Auth Form Submission (Login / Register)
+    // Form Submission (Login / Register Handling)
     if (authForm) {
         authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const email = document.getElementById('email').value.trim();
+            const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const username = document.getElementById('username') ? document.getElementById('username').value.trim() : '';
+            const username = document.getElementById('username') ? document.getElementById('username').value : '';
             const role = document.getElementById('role') ? document.getElementById('role').value : 'user';
 
-            const endpoint = isRegisterMode ? `${API_AUTH_URL}/register` : `${API_AUTH_URL}/login`;
+            const endpoint = isRegisterMode ? '/api/auth/register' : '/api/auth/login';
             const payload = isRegisterMode ? { username, email, password, role } : { email, password };
 
             try {
@@ -164,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         localStorage.setItem('user', JSON.stringify(data.user));
                         loadDashboard();
                     } else {
-                        // Switch to Login form after registration
                         if (toggleBtn) toggleBtn.click();
                     }
                 } else {
@@ -177,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Load Dashboard View based on Authenticated User
+    // Load Dashboard View based on Role
     function loadDashboard() {
         const userStr = localStorage.getItem('user');
         if (!userStr) return;
@@ -188,48 +89,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const nameDisplay = document.getElementById('user-display-name');
         const roleDisplay = document.getElementById('user-display-role');
-        if (nameDisplay) nameDisplay.innerText = user.username || 'User';
-        if (roleDisplay) {
-            roleDisplay.innerText = (user.role || 'user').toUpperCase();
-            roleDisplay.className = user.role === 'admin' ? 'role-badge badge-admin' : 'role-badge badge-user';
-        }
+        if (nameDisplay) nameDisplay.innerText = user.username;
+        if (roleDisplay) roleDisplay.innerText = user.role.toUpperCase();
 
         const roleContent = document.getElementById('role-content');
         if (roleContent) {
             if (user.role === 'admin') {
                 roleContent.innerHTML = `
-                    <div class="panel-box admin-panel">
+                    <div style="background: #e2f0d9; padding: 10px; margin: 10px 0; border-radius: 5px;">
                         <h4>⚡ Admin Control Panel</h4>
-                        <p>You have administrative privileges: manage, create, and delete items.</p>
+                        <p>You have full access to manage platform settings.</p>
                     </div>
                 `;
             } else {
                 roleContent.innerHTML = `
-                    <div class="panel-box user-panel">
+                    <div style="background: #e6f2ff; padding: 10px; margin: 10px 0; border-radius: 5px;">
                         <h4>👤 User Dashboard</h4>
-                        <p>Welcome! You can view and manage items in your inventory.</p>
+                        <p>Welcome! You can view items and participate in live chat.</p>
                     </div>
                 `;
             }
         }
-
-        // Load items from MySQL into the dashboard
-        loadItems();
     }
 
     // Logout Action
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
+            localStorage.clear();
             if (authBox) authBox.style.display = 'block';
             if (dashboardBox) dashboardBox.style.display = 'none';
         });
     }
 
     // Auto Check Login Status on Page Load
-    if (localStorage.getItem('token') && localStorage.getItem('user')) {
+    if (localStorage.getItem('token')) {
         loadDashboard();
+    }
+
+    // --- Socket.io Real-Time Client Logic ---
+    const socket = io();
+
+    const chatForm = document.getElementById('chat-form');
+    const msgInput = document.getElementById('msg-input');
+    const messagesDiv = document.getElementById('messages');
+
+    socket.on('message', (data) => {
+        const msgElement = document.createElement('div');
+        msgElement.style.margin = '4px 0';
+        msgElement.innerHTML = `<strong>${data.user}</strong> <small style="color: #666;">(${data.time})</small>: ${data.text}`;
+        messagesDiv.appendChild(msgElement);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    });
+
+    if (chatForm) {
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const userStr = localStorage.getItem('user');
+            const user = userStr ? JSON.parse(userStr).username : 'Anonymous';
+
+            if (msgInput.value.trim() !== '') {
+                socket.emit('chatMessage', {
+                    user: user,
+                    text: msgInput.value
+                });
+                msgInput.value = '';
+            }
+        });
     }
 });
